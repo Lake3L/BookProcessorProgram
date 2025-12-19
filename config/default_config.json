@@ -1,0 +1,75 @@
+{
+  "app_config": {
+    "working_directory": "",
+    "create_backups": true,
+    "show_diff": false,
+    "verbose_logging": true,
+    "last_report_file": ""
+  },
+  
+  "cleaner_rules": [
+    {
+      "id": "html_nbsp",
+      "pattern": "&#160;",
+      "replacement": " ",
+      "enabled": true,
+      "use_regex": false,
+      "priority": 1,
+      "category": "html_entities",
+      "description": "Замена неразрывного пробела (&#160;)",
+      "user_editable": true
+    },
+    {
+      "id": "html_shy",
+      "pattern": "&#173;",
+      "replacement": "",
+      "enabled": true,
+      "use_regex": false,
+      "priority": 1,
+      "category": "html_entities",
+      "description": "Удаление мягкого переноса (&#173;)",
+      "user_editable": true
+    },
+    {
+      "id": "abbr_td",
+      "pattern": "т\\. д\\.",
+      "replacement": "т.д.",
+      "enabled": true,
+      "use_regex": true,
+      "priority": 5,
+      "category": "punctuation",
+      "description": "Сокращение 'т. д.'",
+      "user_editable": true
+    }
+  ],
+  
+  "link_options": {
+    "enabled_terminators": [" ", ",", "<", ">", "\"", ")"],
+    "case_sensitive": false,
+    "protocols": ["http://", "https://", "ftp://", "mailto:"],
+    "css_class": "clickable-link",
+    "skip_existing": true,
+    "process_after_head": true
+  },
+  
+  "extractor_options": {
+    "mode": "EXTRACT_METADATA",
+    "start_markers": [
+      "Все права защищены",
+      "© Издательство",
+      "Правообладатель"
+    ],
+    "end_markers": [
+      "Главный редактор",
+      "Ответственный редактор",
+      "Корректор"
+    ]
+  },
+  
+  "general_options": {
+    "create_backup": true,
+    "show_diff": false,
+    "verbose_logging": true,
+    "encoding": "UTF-8"
+  }
+}

@@ -1,0 +1,4 @@
+#include <windows.h>
+
+// Иконка приложения
+IDI_ICON1 ICON "app_icon.ico"

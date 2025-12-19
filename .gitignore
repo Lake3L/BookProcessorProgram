@@ -1,0 +1,49 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+bin/
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.qbs.user.*.*
+
+# Qt Creator CMake
+CMakeLists.txt.user*
+
+# Compiled executables
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+input/
+output/
+*.tmp
+*.bak
+
+# Installer
+*.iss
+Setup*.exe
+
+# Config backups
+config/*.bak

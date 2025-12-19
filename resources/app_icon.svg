@@ -1,0 +1,28 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#45a049;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Фон -->
+  <rect width="256" height="256" rx="32" fill="url(#grad1)"/>
+
+  <!-- Книга -->
+  <rect x="48" y="80" width="160" height="120" rx="8" fill="#ffffff" stroke="#333" stroke-width="2"/>
+
+  <!-- Страницы -->
+  <rect x="56" y="88" width="144" height="104" fill="#f8f8f8"/>
+  <line x1="56" y1="120" x2="200" y2="120" stroke="#ddd" stroke-width="1"/>
+  <line x1="56" y1="152" x2="200" y2="152" stroke="#ddd" stroke-width="1"/>
+  <line x1="56" y1="184" x2="200" y2="184" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Текст на обложке -->
+  <text x="128" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">B</text>
+  <text x="128" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Book</text>
+  <text x="128" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Processor</text>
+
+  <!-- Закладка -->
+  <rect x="200" y="80" width="8" height="40" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
+</svg>
