@@ -2,9 +2,9 @@
 #define LOGGER_H
 
 #include "Types.h"
-#include <fstream>
 #include <mutex>
 #include <QObject>
+#include <QFile>
 
 namespace BookProcessor {
 
@@ -38,7 +38,7 @@ private:
     wstring levelToString(LogLevel level) const;
 
     std::vector<LogEntry> entries_;
-    std::wofstream log_file_;
+    QFile* log_file_ = nullptr;
     LogLevel min_level_ = LogLevel::INFO;
     mutable std::mutex mutex_;
 };

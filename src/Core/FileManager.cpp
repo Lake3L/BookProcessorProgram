@@ -3,9 +3,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDirIterator>
-#include <fstream>
-#include <codecvt>
-#include <locale>
+#include <QFile>
+#include <QTextStream>
 
 namespace BookProcessor {
 
@@ -86,21 +85,18 @@ wstring FileManager::generateOutputPath(const wstring& input_filename, const wst
 }
 
 bool FileManager::readFile(const wstring& path, wstring& content) const {
-    std::wifstream file;
-    file.open(path.c_str());
+    QString qpath = QString::fromStdWString(path);
+    QFile file(qpath);
     
-    if (!file.is_open()) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         LOG_ERROR(L"FileManager", L"Не удалось открыть файл для чтения: " + path);
         return false;
     }
     
-    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
-    
-    content.clear();
-    wstring line;
-    while (std::getline(file, line)) {
-        content += line + L"\n";
-    }
+    QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8);
+    QString text = in.readAll();
+    content = text.toStdWString();
     
     file.close();
     LOG_INFO(L"FileManager", L"Файл прочитан: " + path);
@@ -108,16 +104,17 @@ bool FileManager::readFile(const wstring& path, wstring& content) const {
 }
 
 bool FileManager::writeFile(const wstring& path, const wstring& content) {
-    std::wofstream file;
-    file.open(path.c_str());
+    QString qpath = QString::fromStdWString(path);
+    QFile file(qpath);
     
-    if (!file.is_open()) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         LOG_ERROR(L"FileManager", L"Не удалось открыть файл для записи: " + path);
         return false;
     }
     
-    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
-    file << content;
+    QTextStream out(&file);
+    out.setEncoding(QStringConverter::Utf8);
+    out << QString::fromStdWString(content);
     file.close();
     
     LOG_INFO(L"FileManager", L"Файл записан: " + path);

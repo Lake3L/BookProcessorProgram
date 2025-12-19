@@ -380,7 +380,7 @@ void MainWindow::processFiles() {
             output_path = (info.absolutePath() + "/" + info.baseName() + "_processed." + info.suffix()).toStdWString();
         }
         
-        logMessage(QString("📄 Обработка: %1").arg(filename_q));
+        logMessage(QString("📄 Обработка: %1").arg(full_path_q));
         
         // Создаём backup если нужно
         if (create_backup_checkbox_->isChecked()) {

@@ -2,8 +2,7 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
-#include <codecvt>
-#include <locale>
+#include <QTextStream>
 
 namespace BookProcessor {
 
@@ -13,8 +12,9 @@ Logger& Logger::instance() {
 }
 
 Logger::~Logger() {
-    if (log_file_.is_open()) {
-        log_file_.close();
+    if (log_file_ && log_file_->isOpen()) {
+        log_file_->close();
+        delete log_file_;
     }
 }
 
@@ -39,9 +39,11 @@ void Logger::log(LogLevel level, const wstring& module, const wstring& message) 
        << message;
 
     // Запись в файл
-    if (log_file_.is_open()) {
-        log_file_ << ss.str() << std::endl;
-        log_file_.flush();
+    if (log_file_ && log_file_->isOpen()) {
+        QTextStream out(log_file_);
+        out.setEncoding(QStringConverter::Utf8);
+        out << QString::fromStdWString(ss.str()) << "\n";
+        out.flush();
     }
 
     // Эмитируем сигнал для GUI
@@ -52,12 +54,13 @@ void Logger::log(LogLevel level, const wstring& module, const wstring& message) 
 void Logger::setLogFile(const wstring& path) {
     std::lock_guard<std::mutex> lock(mutex_);
     
-    if (log_file_.is_open()) {
-        log_file_.close();
+    if (log_file_ && log_file_->isOpen()) {
+        log_file_->close();
+        delete log_file_;
     }
 
-    log_file_.open(path.c_str(), std::ios::out | std::ios::app);
-    log_file_.imbue(std::locale(log_file_.getloc(), new std::codecvt_utf8<wchar_t>));
+    log_file_ = new QFile(QString::fromStdWString(path));
+    log_file_->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
 }
 
 void Logger::setMinLevel(LogLevel level) {
@@ -103,16 +106,17 @@ void Logger::clear() {
 bool Logger::exportLog(const wstring& path) const {
     std::lock_guard<std::mutex> lock(mutex_);
     
-    std::wofstream file(path.c_str());
-    if (!file.is_open()) return false;
+    QFile file(QString::fromStdWString(path));
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
     
-    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
+    QTextStream out(&file);
+    out.setEncoding(QStringConverter::Utf8);
     
     for (const auto& entry : entries_) {
-        file << L"[" << entry.timestamp << L"] "
-             << L"[" << levelToString(entry.level) << L"] "
-             << L"[" << entry.module << L"] "
-             << entry.message << std::endl;
+        out << QString::fromStdWString(L"[" + entry.timestamp + L"] "
+             + L"[" + levelToString(entry.level) + L"] "
+             + L"[" + entry.module + L"] "
+             + entry.message) << "\n";
     }
     
     file.close();

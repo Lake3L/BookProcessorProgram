@@ -1,9 +1,9 @@
 #include "NotesModule.h"
 #include "Logger.h"
 #include "FileManager.h"
-#include <fstream>
+#include <QFile>
+#include <QTextStream>
 #include <sstream>
-#include <codecvt>
 
 namespace BookProcessor {
 
@@ -12,25 +12,30 @@ NotesModule::NotesModule() {
 }
 
 bool NotesModule::loadReport(const wstring& report_path) {
-    std::wifstream file(report_path.c_str());
-    if (!file.is_open()) {
+    QString qpath = QString::fromStdWString(report_path);
+    QFile file(qpath);
+    
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         LOG_ERROR(L"NotesModule", L"Не удалось открыть файл отчёта: " + report_path);
         return false;
     }
     
-    file.imbue(std::locale(file.getloc(), new std::codecvt_utf8<wchar_t>));
+    QTextStream in(&file);
+    in.setEncoding(QStringConverter::Utf8);
     
-    wstring line;
-    std::getline(file, line); // Пропускаем заголовок
+    QString line = in.readLine(); // Пропускаем заголовок
     
     notes_.clear();
     
-    while (std::getline(file, line)) {
-        if (line.empty()) continue;
+    while (!in.atEnd()) {
+        line = in.readLine();
+        if (line.isEmpty()) continue;
+        
+        wstring wline = line.toStdWString();
         
         // Парсинг CSV: source_file,line,backlink_id,display_number,target,footnote_id,exists,...
         std::vector<wstring> fields;
-        std::wstringstream ss(line);
+        std::wstringstream ss(wline);
         wstring field;
         
         while (std::getline(ss, field, L',')) {

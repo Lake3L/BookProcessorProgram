@@ -86,7 +86,7 @@ file(COPY config/ DESTINATION ${CMAKE_BINARY_DIR}/config/)
 
 # Установка кодировки для Windows
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
+    target_compile_options(${PROJECT_NAME} PRIVATE /utf-8 /Zc:__cplusplus)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
 endif()
