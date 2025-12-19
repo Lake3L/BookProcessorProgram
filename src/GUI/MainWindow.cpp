@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QGroupBox>
 #include <QSplitter>
+#include <QDir>
 
 namespace BookProcessor {
 
@@ -308,9 +309,15 @@ void MainWindow::updateFileList() {
     logMessage(QString("Найдено файлов: %1 (.html: %2, .txt: %3)")
         .arg(all_files.size()).arg(html_files.size()).arg(txt_files.size()));
     
+    QString working_dir_q = QString::fromStdWString(file_manager_->getWorkingDirectory());
+    
     for (const auto& file : all_files) {
-        auto* item = new QListWidgetItem(QString::fromStdWString(file), file_list_);
+        QString full_path_q = QString::fromStdWString(file);
+        QString relative_path = QDir(working_dir_q).relativeFilePath(full_path_q);
+        
+        auto* item = new QListWidgetItem(relative_path, file_list_);
         item->setCheckState(Qt::Checked);
+        item->setData(Qt::UserRole, full_path_q); // Сохраняем полный путь
         
         // Иконки по типу файла
         if (file.find(L".html") != wstring::npos) {
@@ -337,17 +344,11 @@ void MainWindow::processFiles() {
         if (item->checkState() == Qt::Checked) {
             selected_files << item->text();
             
-            // Получаем полный путь
+            // Получаем полный путь из UserRole
             QString full_path = item->data(Qt::UserRole).toString();
             if (full_path.isEmpty()) {
-                // Если UserRole пуст, значит файл из рабочей папки
-                if (file_manager_->isValidWorkingDir()) {
-                    full_path = QString::fromStdWString(
-                        file_manager_->getInputPath() + L"/" + item->text().toStdWString());
-                } else {
-                    logMessage("  ❌ [ОШИБКА] Не найден путь к файлу: " + item->text(), LogLevel::ERROR);
-                    continue;
-                }
+                logMessage("  ❌ [ОШИБКА] Не найден путь к файлу: " + item->text(), LogLevel::ERROR);
+                continue;
             }
             full_paths << full_path;
         }
