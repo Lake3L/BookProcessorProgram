@@ -63,6 +63,11 @@ set(RESOURCES
     resources/resources.qrc
 )
 
+# Windows RC файл для иконки
+if(WIN32)
+    set(RESOURCES ${RESOURCES} resources/app.rc)
+endif()
+
 # Объединение всех файлов
 add_executable(${PROJECT_NAME} WIN32
     ${CORE_SOURCES}
